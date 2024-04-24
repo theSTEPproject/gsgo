@@ -24,6 +24,7 @@ const FILES = require('./util/files');
 const FNAME = require('./util/files-naming');
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 let LOGGING_ENABLED = false; // default
+let LASTRTLOGGED = ''; // The last data logged to a real time log. Used to reduce redundant logging.
 
 /// MODULE-WIDE VARS //////////////////////////////////////////////////////////
 /// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
@@ -102,6 +103,17 @@ function RTLogLine(...args) {
   rt_log.write(out);
 }
 
+// Check if the previous real time log line is the same as the one about to be logged.
+function IsRepeatRTLogLine(data) {
+  if (typeof data === "string"){
+    // first find if lines are equal
+    const linesEqual = data === LASTRTLOGGED;
+    // then update LASTRTLOGGED
+    LASTRTLOGGED = data;
+    return linesEqual;
+  } else throw Error('must pass a string')
+}
+
 /// API METHODS ///////////////////////////////////////////////////////////////
 /// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 let LOG = {};
@@ -156,8 +168,12 @@ LOG.StartLogging = StartLogging;
 LOG.PacketInspector = pkt => {
   // log to separate real-time file
   // ONLY log NET:DISPLAY_LIST updates
-  if (LOGGING_ENABLED && pkt.msg === 'NET:DISPLAY_LIST')
-    RTLogLine(pkt.s_uaddr, pkt.msg, JSON.stringify(pkt.data));
+  if (LOGGING_ENABLED && pkt.msg === 'NET:DISPLAY_LIST') {
+    const dataString = JSON.stringify(pkt.data, null, 2);
+    if (IsRepeatRTLogLine(dataString))
+      return;
+    RTLogLine(pkt.s_uaddr, pkt.msg, dataString);
+  }
 };
 
 /// EXPORT MODULE DEFINITION //////////////////////////////////////////////////
