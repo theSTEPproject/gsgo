@@ -168,12 +168,15 @@ LOG.StartLogging = StartLogging;
 LOG.PacketInspector = pkt => {
   // log to separate real-time file
   // ONLY log NET:DISPLAY_LIST updates
-  if (LOGGING_ENABLED && pkt.msg === 'NET:DISPLAY_LIST') {
+  // Commenting this out for now because we want to use this function for logging multiple msg types
+  // && pkt.msg === 'NET:DISPLAY_LIST'
+  if (LOGGING_ENABLED) {
     const dataString = JSON.stringify(pkt.data, null, 2);
     if (IsRepeatRTLogLine(dataString))
-      return;
+      return { OK: true };
     RTLogLine(pkt.s_uaddr, pkt.msg, dataString);
   }
+  return { OK: true };
 };
 
 /// EXPORT MODULE DEFINITION //////////////////////////////////////////////////
