@@ -261,17 +261,18 @@ ENTITY_TO_COBJ.setMapFunctions({
     // Keep track of when a new COBJ has been added so we can truigger PanelMap updates
     COBJ_ADDED = true;
 
-    UR.SendMessage('NET:SRV_RTLOG', {
-      event: entity.type,
-      items: [
-        {
-          id: cobj.id,
-          bpid: cobj.bpid,
-          x,
-          y
-        }
-      ]
-    });
+    // Commenting out in favor of NET:DISPLAY_LIST log
+    // UR.SendMessage('NET:SRV_RTLOG', {
+    //   event: entity.type,
+    //   items: [
+    //     {
+    //       id: cobj.id,
+    //       bpid: cobj.bpid,
+    //       x,
+    //       y
+    //     }
+    //   ]
+    // });
   },
   onUpdate: (entity: any, cobj: InputDef) => {
     const TRANSFORM = TRANSFORMS[entity.type] || TRANSFORMS[TYPES.Faketrack]; // default to faketrack no transforms
@@ -295,17 +296,18 @@ ENTITY_TO_COBJ.setMapFunctions({
     cobj.label = entity.type === TYPES.Pozyx ? entity.id.substring(2) : entity.id;
     cobj.framesSinceLastUpdate = 0;
 
-    UR.SendMessage('NET:SRV_RTLOG', {
-      event: entity.type,
-      items: [
-        {
-          id: cobj.id,
-          bpid: cobj.bpid,
-          x: pos.x,
-          y: pos.y
-        }
-      ]
-    });
+    // Commenting out in favor of NET:DISPLAY_LIST log
+    // UR.SendMessage('NET:SRV_RTLOG', {
+    //   event: entity.type,
+    //   items: [
+    //     {
+    //       id: cobj.id,
+    //       bpid: cobj.bpid,
+    //       x: pos.x,
+    //       y: pos.y
+    //     }
+    //   ]
+    // });
   },
   shouldRemove: cobj => {
     // entities do not necessarily come in with every INPUTS phase fire
