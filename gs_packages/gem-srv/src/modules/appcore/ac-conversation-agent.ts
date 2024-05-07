@@ -10,7 +10,8 @@ import UR from '@gemstep/ursys/client';
 
 /// CONSTANTS & DECLARATIONS //////////////////////////////////////////////////
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-const ECAURL = 'https://tracedata-01.csc.ncsu.edu/GetECAResponse';
+// const ECAURL = 'https://tracedata-01.csc.ncsu.edu/GetECAResponse';
+const ECAURL = 'https://bl-educ-engage.educ.indiana.edu/GetECAResponse';
 // This determines the path where the profile images come from
 const PROFILEIMAGEPATH = '/assets/art-assets/sprites/';
 const STATE = new UR.class.StateGroupMgr('ecaTypes');
@@ -30,12 +31,14 @@ STATE.initializeState({
 const { _getKey, updateKey, _publishState } = STATE;
 
 interface payload {
+  Context: string;
   Utterance: string;
   ECAType: string;
   ConfidenceThreshold: number;
 }
 
 let requestPayload: payload = {
+  Context: '',
   Utterance: '',
   ECAType: '',
   ConfidenceThreshold: 0.6
@@ -80,7 +83,7 @@ async function FetchResponse(
   // Ensures that ConfidenceThreshold will be left as a number
   // which is required by the ECA API
   let formattedPayload = JSON.stringify(requestPayload, (key, value) =>
-    isNaN(value) ? value : +value
+    isNaN(value) || value === '' ? value : +value
   );
 
   let logString = `Utterance: "${requestPayload.Utterance}",
