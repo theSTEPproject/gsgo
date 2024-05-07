@@ -171,9 +171,10 @@ LOG.PacketInspector = pkt => {
   if (LOGGING_ENABLED && pkt.msg === 'NET:DISPLAY_LIST') {
     const dataString = JSON.stringify(pkt.data, null, 2);
     if (IsRepeatRTLogLine(dataString))
-      return;
+      return { OK: true };
     RTLogLine(pkt.s_uaddr, pkt.msg, dataString);
   }
+  return { OK: true };
 };
 
 /// EXPORT MODULE DEFINITION //////////////////////////////////////////////////
