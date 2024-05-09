@@ -44,6 +44,10 @@ let requestPayload: payload = {
   ConfidenceThreshold: 0.6
 };
 
+function SetECAContext(context: string): void {
+  requestPayload.Context = context;
+}
+
 function GetECATypes(): TConversationAgent[] | null {
   const ecaTypes: TConversationAgent[] = [..._getKey('ecaTypes')];
   let ecaTypesWithImagePath: TConversationAgent[] = [];

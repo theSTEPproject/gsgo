@@ -17,6 +17,7 @@ import { withStyles } from '@material-ui/core/styles';
 import * as SIMCTRL from 'modules/msgex/mx-sim-control';
 import * as PROJSERVER from './helpers/project-server';
 import * as ACMetadata from 'modules/appcore/ac-metadata';
+import * as ACConversationAgent from 'modules/appcore/ac-conversation-agent';
 import { ERR_MGR } from 'modules/error-mgr';
 
 /// PANELS ////////////////////////////////////////////////////////////////////
@@ -105,12 +106,14 @@ class MissionControl extends React.Component {
     this.UpdateWebCamSetting = this.UpdateWebCamSetting.bind(this);
     this.SaveWebCamSetting = this.SaveWebCamSetting.bind(this);
     this.UpdateLogSetting = this.UpdateLogSetting.bind(this);
+    this.SetECAContext = this.SetECAContext.bind(this);
     UR.HandleMessage('NET:SCRIPT_UPDATED', this.DoScriptUpdate);
     UR.HandleMessage('NET:HACK_SIM_STOP', this.DoSimStop);
     UR.HandleMessage('NET:SIM_WAS_RESET', this.OnSimWasReset);
     UR.HandleMessage('NET:INSPECTOR_UPDATE', this.OnInspectorUpdate);
     UR.HandleMessage('SHOW_MESSAGE', this.DoShowMessage);
     UR.HandleMessage('WEBCAM_UPDATE', this.UpdateWebCamSetting);
+    UR.HandleMessage('SET_ECA_CONTEXT', this.SetECAContext);
 
     // Instance Interaction Handlers
     this.HandleDragEnd = this.HandleDragEnd.bind(this);
@@ -189,6 +192,7 @@ class MissionControl extends React.Component {
     UR.UnhandleMessage('SIM_INSTANCE_HOVEROUT', this.HandleSimInstanceHoverOut);
     UR.UnhandleMessage('SHOW_MESSAGE', this.DoShowMessage);
     UR.UnhandleMessage('ECA_TOGGLE', this.handleECAToggleMessage);
+    UR.HandleMessage('SET_ECA_CONTEXT', this.SetECAContext)
   }
 
   GetUDID() {
@@ -304,6 +308,11 @@ class MissionControl extends React.Component {
     UR.LogEnabled(logState); // client-side: local
     UR.SendMessage('NET:LOG_ENABLE', { enabled: logState }); // viewers and controllers
     UR.SendMessage('NET:SRV_LOG_ENABLE', { enabled: logState }); // server-side
+  }
+
+  SetECAContext(context){
+    ACConversationAgent.SetECAContext(context);
+    console.log(`ECA Context from message: ${context}`);
   }
 
   /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
