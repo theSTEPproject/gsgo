@@ -28,6 +28,7 @@ class AIPack extends SM_Feature {
 
     this.featAddMethod('toggleECA', this.toggleECA);
     this.featAddMethod('setEcaStatus', this.setEcaStatus);
+    this.featAddMethod('updateECAStatus', this.updateECAStatus);
   }
 
   /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -56,12 +57,19 @@ class AIPack extends SM_Feature {
 
   setEcaStatus(agent: IAgent, text: string) {
     agent.prop.AI.ecaStatusString.setTo(text);
-    // raise a message of the new value so it can be used in the next ECA call
-    UR.RaiseMessage('SET_ECA_CONTEXT', agent.prop.AI.ecaStatusString.value);
+    this.updateECAStatus(agent);
+
     if (DBG)
       console.log(
         'Setting ECA status string to: ' + agent.prop.AI.ecaStatusString.value
       );
+  }
+
+  updateECAStatus(agent: IAgent) {
+    // raise a message of the new value so it can be used in the next ECA call
+    // UR.RaiseMessage('SET_ECA_CONTEXT', agent.prop.AI.ecaStatusString.value);
+
+    if (DBG) console.log('Raising SET_ECA_CONTEXT');
   }
 
   /// SYMBOL DECLARATIONS /////////////////////////////////////////////////////
@@ -88,7 +96,8 @@ class AIPack extends SM_Feature {
     },
     methods: {
       'toggleECA': {},
-      'setEcaStatus': { args: ['text:string'] }
+      'setEcaStatus': { args: ['text:string'] },
+      'updateECAStatus': {}
     }
   };
 }
