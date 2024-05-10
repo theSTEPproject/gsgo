@@ -144,4 +144,4 @@ function SetECATypes(ecaTypes) {
   }
 }
 
-export { FetchResponse, GetECATypes, SetECATypes };
+export { SetECAContext, FetchResponse, GetECATypes, SetECATypes };

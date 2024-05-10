@@ -67,7 +67,7 @@ class AIPack extends SM_Feature {
 
   updateECAStatus(agent: IAgent) {
     // raise a message of the new value so it can be used in the next ECA call
-    // UR.RaiseMessage('SET_ECA_CONTEXT', agent.prop.AI.ecaStatusString.value);
+    UR.RaiseMessage('SET_ECA_CONTEXT', agent.prop.AI.ecaStatusString.value);
 
     if (DBG) console.log('Raising SET_ECA_CONTEXT');
   }
