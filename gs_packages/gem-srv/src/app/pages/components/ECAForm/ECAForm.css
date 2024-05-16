@@ -99,6 +99,17 @@ textarea {
   padding: 0.5em;
 }
 
+.context-button{
+  border: 1px solid rgba(0, 156, 156, 1);
+  border-radius: 0.25rem;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: transparent;
+  color: white;
+  padding: 0.5em;
+  margin: 0 0.5em;
+}
+
 .send:hover {
   color: black;
   background-color: white;

@@ -48,6 +48,10 @@ function SetECAContext(context: string): void {
   requestPayload.Context = context;
 }
 
+function GetECAContext(): string {
+  return requestPayload.Context
+}
+
 function GetECATypes(): TConversationAgent[] | null {
   const ecaTypes: TConversationAgent[] = [..._getKey('ecaTypes')];
   let ecaTypesWithImagePath: TConversationAgent[] = [];
@@ -144,4 +148,4 @@ function SetECATypes(ecaTypes) {
   }
 }
 
-export { SetECAContext, FetchResponse, GetECATypes, SetECATypes };
+export { SetECAContext, GetECAContext, FetchResponse, GetECATypes, SetECATypes };

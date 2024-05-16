@@ -19,6 +19,7 @@ function ECAForm({ messages, onNewMessage, ecaTypes }) {
   const [messageContent, setMessageContent] = useState('');
   const [isMessageLoading, setIsMessageLoading] = useState(false);
   const [isReading, setIsReading] = useState(false); // State to track whether it's currently reading or not
+  const [showContext, setShowContext] = useState(false); // Used to track whether message context is displayed.
 
   // Using useEffect here because the first response from a message sent by a user
   // in the chat would always have null for its responder.
@@ -81,6 +82,7 @@ function ECAForm({ messages, onNewMessage, ecaTypes }) {
           ...messages,
           {
             utterance: formUtterance,
+            context: ACConversationAgent.GetECAContext(),
             answer: lastResponse,
             responder: ecaType.label,
             image: ecaType.image,
@@ -106,6 +108,7 @@ function ECAForm({ messages, onNewMessage, ecaTypes }) {
             <div className={'you'}>{dialogue.utterance}</div>
           </div>
         )}
+        {(dialogue.context && showContext) && (<div className={'you'}>Context: {dialogue.context}</div>)}
         <div className={'message'}>
           <div className={'message-responder'}>{dialogue.responder}</div>
           <div className={'responder-image-container'}>
@@ -231,6 +234,7 @@ function ECAForm({ messages, onNewMessage, ecaTypes }) {
               disabled={!messageContent}
             />
           </form>
+          <button className={'context-button'} onClick={() => setShowContext(!showContext)}>Show Context</button>
         </div>
       </div>
     );
