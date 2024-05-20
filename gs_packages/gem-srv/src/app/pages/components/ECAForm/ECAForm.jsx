@@ -108,7 +108,11 @@ function ECAForm({ messages, onNewMessage, ecaTypes }) {
             <div className={'you'}>{dialogue.utterance}</div>
           </div>
         )}
-        {(dialogue.context && showContext) && (<div className={'you'}>Context: {dialogue.context}</div>)}
+        {dialogue.context && showContext && (
+          <div className={'message'}>
+            <div className={'you'}>Context: {dialogue.context}</div>
+          </div>
+        )}
         <div className={'message'}>
           <div className={'message-responder'}>{dialogue.responder}</div>
           <div className={'responder-image-container'}>
@@ -234,7 +238,12 @@ function ECAForm({ messages, onNewMessage, ecaTypes }) {
               disabled={!messageContent}
             />
           </form>
-          <button className={'context-button'} onClick={() => setShowContext(!showContext)}>Show Context</button>
+          <button
+            className={'context-button'}
+            onClick={() => setShowContext(!showContext)}
+          >
+            {showContext? 'Hide Context' : 'Show Context'}
+          </button>
         </div>
       </div>
     );
