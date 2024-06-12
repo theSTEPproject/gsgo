@@ -25,6 +25,7 @@ const FNAME = require('./util/files-naming');
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 let LOGGING_ENABLED = false; // default
 let LASTRTLOGGED = ''; // The last data logged to a real time log. Used to reduce redundant logging.
+let SIM_RUNNING = false;
 
 /// MODULE-WIDE VARS //////////////////////////////////////////////////////////
 /// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
@@ -105,13 +106,13 @@ function RTLogLine(...args) {
 
 // Check if the previous real time log line is the same as the one about to be logged.
 function IsRepeatRTLogLine(data) {
-  if (typeof data === "string"){
+  if (typeof data === 'string') {
     // first find if lines are equal
     const linesEqual = data === LASTRTLOGGED;
     // then update LASTRTLOGGED
     LASTRTLOGGED = data;
     return linesEqual;
-  } else throw Error('must pass a string')
+  } else throw Error('must pass a string');
 }
 
 /// API METHODS ///////////////////////////////////////////////////////////////
@@ -168,12 +169,19 @@ LOG.StartLogging = StartLogging;
 LOG.PacketInspector = pkt => {
   // log to separate real-time file
   // ONLY log NET:DISPLAY_LIST updates
-  if (LOGGING_ENABLED && pkt.msg === 'NET:DISPLAY_LIST') {
+
+  if (SIM_RUNNING && LOGGING_ENABLED && pkt.msg === 'NET:DISPLAY_LIST') {
     const dataString = JSON.stringify(pkt.data, null, 2);
-    if (IsRepeatRTLogLine(dataString))
-      return { OK: true };
+    if (IsRepeatRTLogLine(dataString)) return { OK: true };
     RTLogLine(pkt.s_uaddr, pkt.msg, dataString);
   }
+  // track if the sim is running and only write out logs when it is
+  else if (pkt.msg == 'NET:HACK_SIM_STOP') {
+    SIM_RUNNING = false;
+  } else if (pkt.msg == 'NET:HACK_SIM_START') {
+    SIM_RUNNING = true;
+  }
+
   return { OK: true };
 };
 

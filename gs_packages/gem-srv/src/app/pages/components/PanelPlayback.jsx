@@ -36,12 +36,15 @@ class PanelPlayback extends React.Component {
     UR.RaiseMessage('NET:HACK_SIM_NEXTROUND');
   }
 
-  OnStartClick() {
+  OnStartClick(modelName) {
     if (IsRunning()) {
       UR.LogEvent('SimEvent', ['Stop Round']);
       UR.RaiseMessage('NET:HACK_SIM_STOP');
     } else {
       UR.LogEvent('SimEvent', ['Start Round']);
+      UR.RaiseMessage('NET:DISPLAY_LIST', {
+        logString: `Model: ${modelName}`
+      });
       UR.RaiseMessage('NET:HACK_SIM_START');
     }
   }
@@ -49,7 +52,7 @@ class PanelPlayback extends React.Component {
   render() {
     const { title } = this.state;
     const isRunning = IsRunning();
-    const { id, isDisabled, needsUpdate, isActive, classes } = this.props;
+    const { id, isDisabled, needsUpdate, isActive, classes, projId } = this.props;
 
     const onClick = () => {
       // To be implemented
@@ -128,7 +131,7 @@ class PanelPlayback extends React.Component {
                   </button>
                 )}
                 {showRun && (
-                  <PlayButton isRunning={isRunning} onClick={this.OnStartClick} />
+                  <PlayButton isRunning={isRunning} onClick={() => this.OnStartClick(projId)} />
                 )}
                 {showNextRun && (
                   <button

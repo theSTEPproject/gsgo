@@ -730,6 +730,7 @@ class MissionControl extends React.Component {
                     id="playback"
                     isDisabled={!projectIsLoaded}
                     needsUpdate={scriptsNeedUpdate}
+                    projId={projId}
                   />
                   <PanelInstances
                     id="instances"
