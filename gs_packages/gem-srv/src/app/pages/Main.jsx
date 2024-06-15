@@ -85,7 +85,8 @@ class MissionControl extends React.Component {
       dialogMessage: undefined,
       showWebCam: false,
       consoleLeftWidth: 15, // as % of screen
-      consoleRightWidth: 20 // as % of screen
+      consoleRightWidth: 20, // as % of screen
+      enableLogs: true
     };
 
     // Initialization
@@ -106,6 +107,7 @@ class MissionControl extends React.Component {
     this.UpdateWebCamSetting = this.UpdateWebCamSetting.bind(this);
     this.SaveWebCamSetting = this.SaveWebCamSetting.bind(this);
     this.UpdateLogSetting = this.UpdateLogSetting.bind(this);
+    this.UpdateLoggingEnabled = this.UpdateLoggingEnabled.bind(this);
     this.SetECAContext = this.SetECAContext.bind(this);
     UR.HandleMessage('NET:SCRIPT_UPDATED', this.DoScriptUpdate);
     UR.HandleMessage('NET:HACK_SIM_STOP', this.DoSimStop);
@@ -113,6 +115,7 @@ class MissionControl extends React.Component {
     UR.HandleMessage('NET:INSPECTOR_UPDATE', this.OnInspectorUpdate);
     UR.HandleMessage('SHOW_MESSAGE', this.DoShowMessage);
     UR.HandleMessage('WEBCAM_UPDATE', this.UpdateWebCamSetting);
+    UR.HandleMessage('LOGGING_UPDATE', this.UpdateLoggingEnabled);
     UR.HandleMessage('SET_ECA_CONTEXT', this.SetECAContext);
 
     // Instance Interaction Handlers
@@ -192,7 +195,7 @@ class MissionControl extends React.Component {
     UR.UnhandleMessage('SIM_INSTANCE_HOVEROUT', this.HandleSimInstanceHoverOut);
     UR.UnhandleMessage('SHOW_MESSAGE', this.DoShowMessage);
     UR.UnhandleMessage('ECA_TOGGLE', this.handleECAToggleMessage);
-    UR.HandleMessage('SET_ECA_CONTEXT', this.SetECAContext)
+    UR.HandleMessage('SET_ECA_CONTEXT', this.SetECAContext);
   }
 
   GetUDID() {
@@ -290,11 +293,14 @@ class MissionControl extends React.Component {
 
   /// Triggered by WEBCAM_UPDATE
   UpdateWebCamSetting() {
+    console.log('UpdateWebCamSetting ');
     const metadata = ACMetadata.GetMetadata();
     this.setState({ showWebCam: metadata.showWebCam });
   }
 
   SaveWebCamSetting(e) {
+    console.log('SaveWebCamSetting ');
+
     const metadata = ACMetadata.GetMetadata();
     metadata.showWebCam = e.target.checked;
     this.setState({ showWebCam: e.target.checked });
@@ -303,14 +309,24 @@ class MissionControl extends React.Component {
     UR.CallMessage('WEBCAM_UPDATE');
   }
 
-  UpdateLogSetting(e) {
-    const logState = e.target.checked;
-    UR.LogEnabled(logState); // client-side: local
-    UR.SendMessage('NET:LOG_ENABLE', { enabled: logState }); // viewers and controllers
-    UR.SendMessage('NET:SRV_LOG_ENABLE', { enabled: logState }); // server-side
+  /// Triggered by LOGGING_UPDATE
+  UpdateLoggingEnabled() {
+    console.log('UpdateLoggingEnabled ');
+    const metadata = ACMetadata.GetMetadata();
+    this.setState({ enableLogs: metadata.enableLogs });
   }
 
-  SetECAContext(context){
+  UpdateLogSetting(e) {
+    const newEnableLogs = e.target.checked;
+    const metadata = ACMetadata.GetMetadata();
+    metadata.enableLogs = newEnableLogs;
+    this.setState({ enableLogs: newEnableLogs });
+    UR.LogEnabled(newEnableLogs); // client-side: local
+    UR.SendMessage('NET:LOG_ENABLE', { enabled: newEnableLogs }); // viewers and controllers
+    UR.SendMessage('NET:SRV_LOG_ENABLE', { enabled: newEnableLogs }); // server-side
+  }
+
+  SetECAContext(context) {
     ACConversationAgent.SetECAContext(context);
     console.log(`ECA Context from message: ${context}`);
   }
@@ -496,7 +512,8 @@ class MissionControl extends React.Component {
       dialogMessage,
       showWebCam,
       consoleLeftWidth,
-      consoleRightWidth
+      consoleRightWidth,
+      enableLogs
     } = this.state;
     const { classes } = this.props;
     const { width, height, bgcolor } = PROJSERVER.GetBoundary();
@@ -567,7 +584,11 @@ class MissionControl extends React.Component {
         </label>
         <label>
           Log:
-          <input type="checkbox" onChange={this.UpdateLogSetting} />
+          <input
+            type="checkbox"
+            checked={enableLogs}
+            onChange={this.UpdateLogSetting}
+          />
         </label>
         &emsp;
       </div>

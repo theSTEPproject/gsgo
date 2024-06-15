@@ -38,7 +38,8 @@ STATE.initializeState({
       translateY: 0,
       rotate: 0,
       mirrorX: false,
-      mirrorY: false
+      mirrorY: false,
+      enableLogs: true
     }
   ]
 });
@@ -236,6 +237,10 @@ function SetMetadata(projId, metadata) {
       ? metadata.defaultCharacter
       : undefined;
 
+  // Migration: Add log settings if they're missing
+  metadata.enableLogs =
+    metadata.enableLogs !== undefined ? metadata.enableLogs : true;
+
   // Update datacore
   DCPROJECT.UpdateProjectData({ metadata });
   updateAndPublish(metadata);
@@ -243,6 +248,8 @@ function SetMetadata(projId, metadata) {
   // Explicitly raise WEBCAM_UPDATE so that Main and WebCam
   // will update.  NOTE this is not a general METADATA update.
   UR.CallMessage('WEBCAM_UPDATE');
+  // do the dame for logging ...
+  UR.CallMessage('LOGGING_UPDATE');
 
   // } catch (caught) {
   //   ERROR(`could not set ${projId} metadata`, {

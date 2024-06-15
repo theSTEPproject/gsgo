@@ -23,7 +23,7 @@ const TOUT = require('./util/prompts').makeTerminalOut(' URLOG');
 const FILES = require('./util/files');
 const FNAME = require('./util/files-naming');
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-let LOGGING_ENABLED = false; // default
+let LOGGING_ENABLED = true; // default - though we need to get this coming from the project file ... if you change this, update main.jsx to match until we fix that
 let LASTRTLOGGED = ''; // The last data logged to a real time log. Used to reduce redundant logging.
 let SIM_RUNNING = false;
 
@@ -127,6 +127,7 @@ let LOG = {};
  */
 LOG.PKT_LogEnable = pkt => {
   LOGGING_ENABLED = pkt.data.enabled;
+  // TOUT(`LOGGING_ENABLED  set to ${LOGGING_ENABLED}`);
   return { OK: true };
 };
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -171,7 +172,7 @@ LOG.PacketInspector = pkt => {
   // ONLY log NET:DISPLAY_LIST updates
 
   if (SIM_RUNNING && LOGGING_ENABLED && pkt.msg === 'NET:DISPLAY_LIST') {
-    const dataString = JSON.stringify(pkt.data, null, 2);
+    const dataString = JSON.stringify(pkt.data);
     if (IsRepeatRTLogLine(dataString)) return { OK: true };
     RTLogLine(pkt.s_uaddr, pkt.msg, dataString);
   }
