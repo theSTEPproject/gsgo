@@ -195,6 +195,8 @@ LOG.PacketInspector = pkt => {
     SIM_RUNNING = false;
   } else if (pkt.msg == 'NET:HACK_SIM_START') {
     SIM_RUNNING = true;
+    const dataString = JSON.stringify(pkt.data);
+    RTLogLine(pkt.s_uaddr, pkt.msg, dataString);
   }
 
   return { OK: true };

@@ -6,6 +6,7 @@ import { useStylesHOC } from '../helpers/page-xui-styles';
 
 import PanelChrome from './PanelChrome';
 import PlayButton from './PlayButton';
+import * as ACMetadata from 'modules/appcore/ac-metadata';
 
 class PanelPlayback extends React.Component {
   constructor() {
@@ -42,10 +43,23 @@ class PanelPlayback extends React.Component {
       UR.RaiseMessage('NET:HACK_SIM_STOP');
     } else {
       UR.LogEvent('SimEvent', ['Start Round']);
-      UR.RaiseMessage('NET:DISPLAY_LIST', {
-        logString: `Model: ${modelName}`
+      const metadata = ACMetadata.GetMetadata();
+      UR.RaiseMessage('NET:HACK_SIM_START', {
+        Model: `${modelName}`,
+        top: `${metadata.top}`,
+        bottom: `${metadata.bottom}`,
+        left: `${metadata.left}`,
+        right: `${metadata.right}`,
+        scaleX: `${metadata.scaleX}`,
+        scaleY: `${metadata.scaleY}`,
+        translateX: `${metadata.translateX}`,
+        translateY: `${metadata.translateY}`,
+        scaleX: `${metadata.scaleX}`,
+        scaleY: `${metadata.scaleY}`,
+        mirrorX: `${metadata.mirrorX}`,
+        mirrorY: `${metadata.mirrorY}`,
+        rotate: `${metadata.rotate}`
       });
-      UR.RaiseMessage('NET:HACK_SIM_START');
     }
   }
 
@@ -131,7 +145,10 @@ class PanelPlayback extends React.Component {
                   </button>
                 )}
                 {showRun && (
-                  <PlayButton isRunning={isRunning} onClick={() => this.OnStartClick(projId)} />
+                  <PlayButton
+                    isRunning={isRunning}
+                    onClick={() => this.OnStartClick(projId)}
+                  />
                 )}
                 {showNextRun && (
                   <button
