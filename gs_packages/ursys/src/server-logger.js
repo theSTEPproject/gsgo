@@ -134,7 +134,7 @@ let LOG = {};
 LOG.PKT_LogEnable = pkt => {
   LOGGING_ENABLED = pkt.data.enabled;
   LOGGING_FREQUENCY = pkt.data.frequency;
-  TOUT(`LOGGING_FREQUENCY  set to ${LOGGING_FREQUENCY}`);
+  // TOUT(`LOGGING_FREQUENCY  set to ${LOGGING_FREQUENCY}`);
   return { OK: true };
 };
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -193,6 +193,8 @@ LOG.PacketInspector = pkt => {
   // track if the sim is running and only write out logs when it is
   else if (pkt.msg == 'NET:HACK_SIM_STOP') {
     SIM_RUNNING = false;
+    const dataString = JSON.stringify(pkt.data);
+    RTLogLine(pkt.s_uaddr, pkt.msg, dataString);
   } else if (pkt.msg == 'NET:HACK_SIM_START') {
     SIM_RUNNING = true;
     const dataString = JSON.stringify(pkt.data);

@@ -46,6 +46,7 @@ class PanelPlayback extends React.Component {
       const metadata = ACMetadata.GetMetadata();
       UR.RaiseMessage('NET:HACK_SIM_START', {
         Model: `${modelName}`,
+        logFrequency: `${metadata.logFrequency}`,
         top: `${metadata.top}`,
         bottom: `${metadata.bottom}`,
         left: `${metadata.left}`,
