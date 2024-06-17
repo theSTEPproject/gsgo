@@ -86,7 +86,8 @@ class MissionControl extends React.Component {
       showWebCam: false,
       consoleLeftWidth: 15, // as % of screen
       consoleRightWidth: 20, // as % of screen
-      enableLogs: true
+      enableLogs: true,
+      logFrequency: 1
     };
 
     // Initialization
@@ -314,6 +315,17 @@ class MissionControl extends React.Component {
     console.log('UpdateLoggingEnabled ');
     const metadata = ACMetadata.GetMetadata();
     this.setState({ enableLogs: metadata.enableLogs });
+    this.setState({ logFrequency: metadata.logFrequency });
+
+    // probably a better way to do this, but this forces the initial logging data to go around
+    UR.SendMessage('NET:LOG_ENABLE', {
+      enabled: metadata.enableLogs,
+      frequency: metadata.logFrequency
+    }); // viewers and controllers
+    UR.SendMessage('NET:SRV_LOG_ENABLE', {
+      enabled: metadata.enableLogs,
+      frequency: metadata.logFrequency
+    }); // server-side
   }
 
   UpdateLogSetting(e) {
@@ -322,8 +334,14 @@ class MissionControl extends React.Component {
     metadata.enableLogs = newEnableLogs;
     this.setState({ enableLogs: newEnableLogs });
     UR.LogEnabled(newEnableLogs); // client-side: local
-    UR.SendMessage('NET:LOG_ENABLE', { enabled: newEnableLogs }); // viewers and controllers
-    UR.SendMessage('NET:SRV_LOG_ENABLE', { enabled: newEnableLogs }); // server-side
+    UR.SendMessage('NET:LOG_ENABLE', {
+      enabled: newEnableLogs,
+      frequency: metadata.logFrequency
+    }); // viewers and controllers
+    UR.SendMessage('NET:SRV_LOG_ENABLE', {
+      enabled: newEnableLogs,
+      frequency: metadata.logFrequency
+    }); // server-side
   }
 
   SetECAContext(context) {
@@ -513,7 +531,8 @@ class MissionControl extends React.Component {
       showWebCam,
       consoleLeftWidth,
       consoleRightWidth,
-      enableLogs
+      enableLogs,
+      logFrequency
     } = this.state;
     const { classes } = this.props;
     const { width, height, bgcolor } = PROJSERVER.GetBoundary();

@@ -24,6 +24,12 @@ const FILES = require('./util/files');
 const FNAME = require('./util/files-naming');
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 let LOGGING_ENABLED = true; // default - though we need to get this coming from the project file ... if you change this, update main.jsx to match until we fix that
+
+// to decide if we should skip some to have a less dense log
+// note that this is currently only applied to the net display
+let LOGGING_FREQUENCY = 1;
+let LOGGING_CNT = 0;
+
 let LASTRTLOGGED = ''; // The last data logged to a real time log. Used to reduce redundant logging.
 let SIM_RUNNING = false;
 
@@ -127,7 +133,8 @@ let LOG = {};
  */
 LOG.PKT_LogEnable = pkt => {
   LOGGING_ENABLED = pkt.data.enabled;
-  // TOUT(`LOGGING_ENABLED  set to ${LOGGING_ENABLED}`);
+  LOGGING_FREQUENCY = pkt.data.frequency;
+  TOUT(`LOGGING_FREQUENCY  set to ${LOGGING_FREQUENCY}`);
   return { OK: true };
 };
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -172,9 +179,16 @@ LOG.PacketInspector = pkt => {
   // ONLY log NET:DISPLAY_LIST updates
 
   if (SIM_RUNNING && LOGGING_ENABLED && pkt.msg === 'NET:DISPLAY_LIST') {
-    const dataString = JSON.stringify(pkt.data);
-    if (IsRepeatRTLogLine(dataString)) return { OK: true };
-    RTLogLine(pkt.s_uaddr, pkt.msg, dataString);
+    LOGGING_CNT++;
+    if (LOGGING_CNT == LOGGING_FREQUENCY) {
+      // re-start count
+      LOGGING_CNT = 0;
+
+      // log this time
+      const dataString = JSON.stringify(pkt.data);
+      if (IsRepeatRTLogLine(dataString)) return { OK: true };
+      RTLogLine(pkt.s_uaddr, pkt.msg, dataString);
+    }
   }
   // track if the sim is running and only write out logs when it is
   else if (pkt.msg == 'NET:HACK_SIM_STOP') {

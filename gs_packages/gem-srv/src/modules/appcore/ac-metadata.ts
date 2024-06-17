@@ -240,6 +240,9 @@ function SetMetadata(projId, metadata) {
   // Migration: Add log settings if they're missing
   metadata.enableLogs =
     metadata.enableLogs !== undefined ? metadata.enableLogs : true;
+  // default to logging constantly (higher number means less frequent as in, 10 means log every 10 times)
+  metadata.logFrequency =
+    metadata.logFrequency !== undefined ? metadata.logFrequency : 1;
 
   // Update datacore
   DCPROJECT.UpdateProjectData({ metadata });
