@@ -50,7 +50,7 @@ if (!UR.FILE.FileExists(localSettingsPath)) {
 EXEC('arch', (error, stdout, stderr) => {
   if (stdout) {
     stdout = stdout.trim();
-    if (stdout !== 'i386') {
+    if (stdout !== 'i386' || stdout !== 'x86_64') {
       TOUT(`ARCHITECTURE: ${stdout}`);
       TOUT(ERR('NOTICE: NETCREATE TESTED ON X86 NODEJS LIBRARIES'));
       TOUT(ERR('ARM-based Macs must use i386-compatible shell'));
