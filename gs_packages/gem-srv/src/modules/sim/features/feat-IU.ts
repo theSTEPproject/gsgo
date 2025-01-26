@@ -8,7 +8,12 @@ For testing new featureees ...
 import UR from '@gemstep/ursys/client';
 import SM_Feature from 'lib/class-sm-feature';
 import { RegisterFeature } from 'modules/datacore/dc-sim-data';
-import { SM_Boolean, SM_Number, SM_String } from 'script/vars/_all_vars';
+import {
+  SM_Boolean,
+  SM_Number,
+  SM_String,
+  SM_Array
+} from 'script/vars/_all_vars';
 import SM_Agent from 'lib/class-sm-agent';
 import { IsRunning } from 'modules/sim/api-sim';
 
@@ -44,12 +49,15 @@ class IUPack extends SM_Feature {
     this.featAddMethod('handleClick', this.handleClick);
     this.featAddMethod('setupFunction', this.setupFunction);
     this.featAddMethod('callFunction', this.callFunction);
+
+    // Add methods from SM_Array
+    this.addArrayMethods();
   }
 
   /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   decorate(agent) {
     super.decorate(agent);
-
+    this.featAddProp(agent, 'joyceArray', new SM_Array());
     this.featAddProp(agent, 'logStringText', new SM_String('INIT'));
     agent.prop.IU.logStringText.setTo('INIT');
   }
@@ -58,6 +66,44 @@ class IUPack extends SM_Feature {
   reset() {
     CLICK_AGENTS.clear();
     CLICK_FUNCTIONS.clear();
+  }
+
+  /// Array Feature Methods ///////////////////////////////////////////////////
+
+  addArrayMethods() {
+    const arrayMethods = [
+      'add',
+      'remove',
+      'get',
+      'clear',
+      'contains',
+      'indexOf',
+      'set',
+      'sort',
+      'filter',
+      'clone',
+      'print',
+      'size',
+      'sortNumericAscending',
+      'sortNumericDescending',
+      'sortStringAscending',
+      'sortStringDescending',
+      'filterByPosition'
+    ];
+
+    arrayMethods.forEach(methodName => {
+      this.featAddMethod(methodName, (agent, ...args) => {
+        const joyceArray = agent.prop.IU.joyceArray;
+        if (
+          joyceArray instanceof SM_Array &&
+          typeof joyceArray[methodName] === 'function'
+        ) {
+          return joyceArray[methodName](...args);
+        }
+        console.error(`Invalid method or SM_Array: ${methodName}`);
+        return null;
+      });
+    });
   }
 
   /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -135,6 +181,7 @@ class IUPack extends SM_Feature {
    *  the name parameter in each methodSignature */
   static Symbols: TSymbolData = {
     props: {
+      joyceArray: SM_Array.Symbolize(),
       logStringText: SM_String.SymbolizeCustom({
         setTo: ['logStringText:string']
       })
@@ -145,7 +192,36 @@ class IUPack extends SM_Feature {
       'forceNext': {},
       'handleClick': { args: ['program:block'] },
       'setupFunction': { args: ['functionName:string', 'program:block'] },
-      'callFunction': { args: ['functionName:string'] }
+      'callFunction': { args: ['functionName:string'] },
+      // Add array methods here for symbolization
+      'add': { args: ['item:identifier'] },
+      'remove': { args: ['index:number'] },
+      'get': { args: ['index:number'] },
+      'clear': {},
+      'contains': { args: ['value:identifier'] },
+      'indexOf': { args: ['value:identifier'] },
+      'set': { args: ['index:number', 'value:identifier'] },
+      'sort': { args: ['compareFn:identifier'] },
+      'filter': { args: ['predicate:identifier'] },
+      'clone': {},
+      'print': { returns: 'string:string' },
+      'size': { returns: 'number:number' },
+      'sortNumericAscending': {
+        info: 'Sorts the array in numeric ascending order.'
+      },
+      'sortNumericDescending': {
+        info: 'Sorts the array in numeric descending order.'
+      },
+      'sortStringAscending': {
+        info: 'Sorts the array in string ascending order.'
+      },
+      'sortStringDescending': {
+        info: 'Sorts the array in string descending order.'
+      },
+      'filterByPosition': {
+        args: ['position:number'],
+        returns: 'array:identifier'
+      }
     }
   };
 }

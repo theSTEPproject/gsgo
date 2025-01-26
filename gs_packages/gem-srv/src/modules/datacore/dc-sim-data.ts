@@ -13,7 +13,12 @@
 \*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ * /////////////////////////////////////*/
 
 import SM_Feature from 'lib/class-sm-feature';
-import { SM_Boolean, SM_Number, SM_String } from 'script/vars/_all_vars';
+import {
+  SM_Boolean,
+  SM_Number,
+  SM_String,
+  SM_Array
+} from 'script/vars/_all_vars';
 import SM_Bundle from 'lib/class-sm-bundle';
 import { EBundleType, EBundleTag } from 'modules/../types/t-script.d'; // workaround to import as obj
 import * as CHECK from './dc-sim-data-utils';
@@ -34,7 +39,11 @@ const TEST_SCRIPTS: Map<string, TSMCProgram> = new Map();
 const NAMED_SCRIPTS: Map<string, TSMCProgram> = new Map();
 const WHEN_TESTS: Map<string, Function> = new Map();
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-type TPropType = typeof SM_String | typeof SM_Number | typeof SM_Boolean;
+type TPropType =
+  | typeof SM_String
+  | typeof SM_Number
+  | typeof SM_Boolean
+  | typeof SM_Array;
 
 /// HELPER METHODS ////////////////////////////////////////////////////////////
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

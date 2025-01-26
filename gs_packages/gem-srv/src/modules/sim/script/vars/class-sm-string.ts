@@ -10,6 +10,7 @@ import SM_Object from 'lib/class-sm-object';
 // uses types defined in t-script.d
 import { RegisterPropType } from 'modules/datacore';
 import { SM_Boolean } from './class-sm-boolean';
+import { SM_Number } from './class-sm-number';
 
 /// CLASS DEFINITION //////////////////////////////////////////////////////////
 /// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -52,6 +53,13 @@ export class SM_String extends SM_Object {
   }
   notEqualToOption(optionLabel: string) {
     return new SM_Boolean(this.value !== this.map.get(optionLabel));
+  }
+  localeCompare(compareStr: string): SM_Number {
+    if (typeof this.value !== 'string') {
+      throw new Error('localeCompare requires a string value');
+    }
+    const result = this.value.localeCompare(compareStr);
+    return new SM_Number(result);
   }
 
   /// SYMBOL DECLARATIONS /////////////////////////////////////////////////////
@@ -121,6 +129,11 @@ export class SM_String extends SM_Object {
         args: [`option:string`],
         info: 'Returns whether this property is not equal to the referenced option value',
         returns: 'isNotEqual:boolean'
+      },
+      localeCompare: {
+        args: [`compareStr:string`],
+        info: 'Compares this string to another string using locale-specific ordering',
+        returns: 'comparisonResult:number'
       }
     }
   };
